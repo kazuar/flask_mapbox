@@ -84,4 +84,8 @@ def mapbox_js():
         stop_locations = stop_locations
     )
 
-# app.run(threaded=True)
+@app.route('/mapbox_gl')
+def mapbox_gl():
+    return render_template('mapbox_gl.html', 
+        ACCESS_KEY=MAPBOX_ACCESS_KEY,
+    )
