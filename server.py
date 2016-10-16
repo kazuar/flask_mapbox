@@ -1,6 +1,7 @@
 
 import json
 import requests
+from geojson import Point, Feature
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash
@@ -38,8 +39,32 @@ ROUTE_URL = "https://api.mapbox.com/directions/v5/mapbox/driving/{0}.json?access
 def create_route_url():
     lat_longs = ";".join(["{0},{1}".format(point["long"], point["lat"]) for point in ROUTE])
     url = ROUTE_URL.format(lat_longs, MAPBOX_ACCESS_KEY)
-    print url
     return url
+
+def create_stop_location_detail(title, latitude, longitude, index):
+    point = Point([longitude, latitude])
+    properties = {
+        "title": title,
+        'icon': "campsite",
+        'marker-color': '#3bb2d0',
+        'marker-symbol': index
+    }
+    feature = Feature(geometry = point, properties = properties)
+    return feature
+
+def create_stop_locations_details():
+    stop_locations = []
+    for location in ROUTE:
+        if not location["is_stop_location"]:
+            continue
+        stop_location = create_stop_location_detail(
+            location['name'],
+            location['lat'],
+            location['long'],
+            len(stop_locations) + 1
+        )
+        stop_locations.append(stop_location)
+    return stop_locations
 
 @app.route('/')
 def index():
@@ -51,9 +76,12 @@ def mapbox_js():
     result = requests.get(route_url)
     route_data = result.json()
 
+    stop_locations = create_stop_locations_details()
+
     return render_template('mapbox_js.html', 
         ACCESS_KEY=MAPBOX_ACCESS_KEY,
-        route_data=json.dumps(route_data["routes"][0]["geometry"])
+        route_data=json.dumps(route_data["routes"][0]["geometry"]),
+        stop_locations = stop_locations
     )
 
 # app.run(threaded=True)

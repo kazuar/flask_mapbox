@@ -20,6 +20,8 @@
       zoomControl: false
     }).setView([65.0,-18.73], 7);
 
+    L.mapbox.featureLayer({{stop_locations|safe}}).addTo(map);
+
     L.mapbox.featureLayer({{route_data|safe}}).addTo(map);
   
   </script>
