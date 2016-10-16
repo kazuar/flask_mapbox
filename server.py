@@ -10,4 +10,10 @@ app.config.from_envvar('APP_CONFIG_FILE', silent=True)
 def index():
 	return render_template('index.html')
 
+@app.route('/mapbox_js')
+def mapbox_js():
+	return render_template('mapbox_js.html', 
+		ACCESS_KEY=app.config['MAPBOX_ACCESS_KEY']
+	)
+
 # app.run(threaded=True)
