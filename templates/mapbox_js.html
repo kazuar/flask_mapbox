@@ -19,6 +19,8 @@
       scrollWheelZoom: false,
       zoomControl: false
     }).setView([65.0,-18.73], 7);
+
+    L.mapbox.featureLayer({{route_data|safe}}).addTo(map);
   
   </script>
 </body>
