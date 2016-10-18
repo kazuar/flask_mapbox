@@ -50,6 +50,10 @@
             });
             map.scrollZoom.disable();
 
+            var popup = new mapboxgl.Popup({
+                closeButton: false
+            });
+
             map.on('load', function () {
                 map.addSource("route", {
                     "type": "geojson",
