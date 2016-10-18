@@ -21,6 +21,7 @@ parts/
 sdist/
 var/
 *.egg-info/
+bower_components/
 .installed.cfg
 *.egg
 

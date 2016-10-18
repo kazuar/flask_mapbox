@@ -1,0 +1,20 @@
+{
+  "name": "flask_mapbox",
+  "homepage": "https://github.com/kazuar/flask_mapbox",
+  "authors": [
+    "Tzahi Vidas <tzahi.vidas@gmail.com>"
+  ],
+  "description": "An example of using flask and mapbox",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "@turf/turf": "^3.5.2"
+  }
+}
