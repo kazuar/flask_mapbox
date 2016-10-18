@@ -25,6 +25,8 @@
         <div id='map'></div>
         <script>
 
+            var counter = 0;
+
             route = {{route_data|safe}}
 
             var origin = route.geometry.coordinates[0];
@@ -96,6 +98,35 @@
                         .setLngLat([marker.long, marker.lat])
                         .addTo(map);
                 });
+
+                map.addSource('point', {
+                    "type": "geojson",
+                    "data": point
+                });
+
+                // Add car icon layer
+                map.addLayer({
+                    "id": "point",
+                    "source": "point",
+                    "type": "symbol",
+                    "layout": {
+                        "icon-image": "car-15",
+                        "icon-size": 1,
+                    }
+                });
+
+                function animate() {
+                    point.features[0].geometry.coordinates = route.geometry.coordinates[counter]
+                    map.getSource('point').setData(point);
+
+                    if (point.features[0].geometry.coordinates[0] !== destination[0]) {
+                        requestAnimationFrame(animate);
+                    }
+
+                    counter = counter + 1;
+                }
+
+                animate();
 
             });
         </script>
