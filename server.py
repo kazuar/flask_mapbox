@@ -66,26 +66,36 @@ def create_stop_locations_details():
         stop_locations.append(stop_location)
     return stop_locations
 
+def get_route_data():
+    route_url = create_route_url()
+    result = requests.get(route_url)
+    geometry = result.json()["routes"][0]["geometry"]
+    print geometry.keys()
+    route_data = Feature(geometry = geometry, properties = {})
+    print route_data.keys()
+    return route_data
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/mapbox_js')
 def mapbox_js():
-    route_url = create_route_url()
-    result = requests.get(route_url)
-    route_data = result.json()
+    route_data = get_route_data()
 
     stop_locations = create_stop_locations_details()
 
     return render_template('mapbox_js.html', 
         ACCESS_KEY=MAPBOX_ACCESS_KEY,
-        route_data=json.dumps(route_data["routes"][0]["geometry"]),
+        route_data=route_data["geometry"],
         stop_locations = stop_locations
     )
 
 @app.route('/mapbox_gl')
 def mapbox_gl():
+    route_data = get_route_data()
+
     return render_template('mapbox_gl.html', 
         ACCESS_KEY=MAPBOX_ACCESS_KEY,
+        route_data = route_data
     )

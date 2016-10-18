@@ -14,6 +14,23 @@
     <body>
         <div id='map'></div>
         <script>
+
+            route = {{route_data|safe}}
+
+            var origin = route.geometry.coordinates[0];
+            var destination = route.geometry.coordinates[route.geometry.coordinates.length - 1];
+
+            var point = {
+                "type": "FeatureCollection",
+                "features": [{
+                    "type": "Feature",
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": origin
+                    }
+                }]
+            };
+
             mapboxgl.accessToken = '{{ ACCESS_KEY }}';
             var map = new mapboxgl.Map({
                 container: 'map',
@@ -22,6 +39,28 @@
                 zoom: 6
             });
             map.scrollZoom.disable();
+
+            map.on('load', function () {
+                map.addSource("route", {
+                    "type": "geojson",
+                    "data": route
+                });
+
+                map.addLayer({
+                    "id": "route",
+                    "type": "line",
+                    "source": "route",
+                    "layout": {
+                        "line-join": "round",
+                        "line-cap": "round"
+                    },
+                    "paint": {
+                        "line-color": "#007cbf",
+                        "line-width": 2
+                    }
+                });
+
+            });
         </script>
     </body>
 </html>
