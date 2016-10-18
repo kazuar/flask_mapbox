@@ -95,7 +95,10 @@ def mapbox_js():
 def mapbox_gl():
     route_data = get_route_data()
 
+    stop_locations = [stop_location for stop_location in ROUTE if stop_location["is_stop_location"]]
+
     return render_template('mapbox_gl.html', 
         ACCESS_KEY=MAPBOX_ACCESS_KEY,
-        route_data = route_data
+        route_data = route_data,
+        stop_locations = json.dumps(stop_locations)
     )

@@ -9,6 +9,16 @@
         <style>
             body { margin:0; padding:0; }
             #map { position:absolute; top:0; bottom:0; width:100%; }
+
+            .marker {
+              border: none;
+              cursor: pointer;
+              height: 32px;
+              width: 32px;
+              background-image: url(static/marker.png);
+              background-color: rgba(0, 0, 0, 0);
+              transform: translate(28px, 56px, 0);
+            }
         </style>
     </head>
     <body>
@@ -58,6 +68,29 @@
                         "line-color": "#007cbf",
                         "line-width": 2
                     }
+                });
+
+                var stop_locations = {{ stop_locations|safe }}
+                stop_locations.forEach(function(marker) {
+                    var el = document.createElement('div');
+                    el.className = 'marker';
+                    el.style.left = '-15px';
+                    el.style.top = '-32px';
+
+                    el.addEventListener('mousemove', function(e) {
+                        var coordinates = map.unproject([e.x, e.y]);
+                        popup.setLngLat(coordinates)
+                          .setText(marker.name)
+                          .addTo(map); 
+                    });
+
+                    el.addEventListener('mouseout', function(e) {
+                        popup.remove(); 
+                    });
+
+                    new mapboxgl.Marker(el)
+                        .setLngLat([marker.long, marker.lat])
+                        .addTo(map);
                 });
 
             });
