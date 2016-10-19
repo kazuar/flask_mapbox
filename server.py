@@ -69,11 +69,12 @@ def create_stop_locations_details():
 def get_route_data():
     route_url = create_route_url()
     result = requests.get(route_url)
-    geometry = result.json()["routes"][0]["geometry"]
-    print geometry.keys()
+    data = result.json()
+
+    geometry = data["routes"][0]["geometry"]
     route_data = Feature(geometry = geometry, properties = {})
-    print route_data.keys()
-    return route_data
+    waypoints = data["waypoints"]
+    return route_data, waypoints
 
 @app.route('/')
 def index():
@@ -81,24 +82,31 @@ def index():
 
 @app.route('/mapbox_js')
 def mapbox_js():
-    route_data = get_route_data()
+    route_data, waypoints = get_route_data()
 
     stop_locations = create_stop_locations_details()
 
     return render_template('mapbox_js.html', 
         ACCESS_KEY=MAPBOX_ACCESS_KEY,
-        route_data=route_data["geometry"],
+        route_data=route_data,
         stop_locations = stop_locations
     )
 
 @app.route('/mapbox_gl')
 def mapbox_gl():
-    route_data = get_route_data()
+    route_data, waypoints = get_route_data()
 
-    stop_locations = [stop_location for stop_location in ROUTE if stop_location["is_stop_location"]]
+    stop_locations = []
+    for waypoint_index, waypoint in enumerate(waypoints):
+        stop_location = ROUTE[waypoint_index]
+        if stop_location["is_stop_location"]:
+            location_index = route_data['geometry']['coordinates'].index(waypoint["location"])
+            stop_location["location_index"] = location_index
+            stop_locations.append(stop_location)
 
     return render_template('mapbox_gl.html', 
         ACCESS_KEY=MAPBOX_ACCESS_KEY,
         route_data = route_data,
-        stop_locations = json.dumps(stop_locations)
+        stop_locations = stop_locations,
+        stop_locations_json = json.dumps(stop_locations)
     )

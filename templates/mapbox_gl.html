@@ -19,10 +19,38 @@
               background-color: rgba(0, 0, 0, 0);
               transform: translate(28px, 56px, 0);
             }
+
+            .overlay {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                display: block;
+            }
+
+            .overlay button {
+                font:600 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+                background-color: #3386c0;
+                color: #fff;
+                display: block;
+                margin: 5px 0 0 0;
+                padding: 10px 20px;
+                border: none;
+                cursor: pointer;
+                border-radius: 3px;
+            }
+
+            .overlay button:hover {
+                background-color:#4ea0da;
+            }
         </style>
     </head>
     <body>
         <div id='map'></div>
+        <div class='overlay'>
+            {% for stop_location in stop_locations %}
+                <button class='location_btn' value='{{ stop_location.location_index }}'>Day {{ loop.index }} - {{ stop_location.name|safe }}</button>
+            {% endfor %}
+        </div>
         <script>
 
             var counter = 0;
@@ -76,7 +104,15 @@
                     }
                 });
 
-                var stop_locations = {{ stop_locations|safe }}
+                $(".location_btn").click(function() {
+                    var location_index = Number($(this).val());
+                    point.features[0].geometry.coordinates = route.geometry.coordinates[location_index];
+                    map.getSource('point').setData(point);
+                    counter = location_index;
+                    animate(counter);
+                });
+
+                var stop_locations = {{ stop_locations_json|safe }}
                 stop_locations.forEach(function(marker) {
                     var el = document.createElement('div');
                     el.className = 'marker';
