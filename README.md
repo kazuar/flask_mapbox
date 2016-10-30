@@ -34,7 +34,7 @@ Start the server by running `start.sh`:
 Browse to [localhost](http://127.0.0.1:5000) for the index page
 
 [Mapbox JS page](http://127.0.0.1:5000/mapbox_js)
-![](doc/mapbox_js.tiff)
+![](doc/mapbox_js.png)
 
 [Mapbox GL page](http://127.0.0.1:5000/mapbox_gl)
-![](doc/mapbox_gl.tiff)
+![](doc/mapbox_gl.png)
