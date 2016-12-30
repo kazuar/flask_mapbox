@@ -46,11 +46,7 @@
     </head>
     <body>
         <div id='map'></div>
-        <div class='overlay'>
-            {% for stop_location in stop_locations %}
-                <button class='location_btn' value='{{ stop_location.location_index }}'>Day {{ loop.index }} - {{ stop_location.name|safe }}</button>
-            {% endfor %}
-        </div>
+        <div class='overlay'></div>
         <script>
 
             var counter = 0;
@@ -104,16 +100,8 @@
                     }
                 });
 
-                $(".location_btn").click(function() {
-                    var location_index = Number($(this).val());
-                    point.features[0].geometry.coordinates = route.geometry.coordinates[location_index];
-                    map.getSource('point').setData(point);
-                    counter = location_index;
-                    animate(counter);
-                });
-
-                var stop_locations = {{ stop_locations_json|safe }}
-                stop_locations.forEach(function(marker) {
+                var stop_locations = {{ stop_locations|safe }}
+                stop_locations.forEach(function(marker, index) {
                     var el = document.createElement('div');
                     el.className = 'marker';
                     el.style.left = '-15px';
@@ -122,7 +110,7 @@
                     el.addEventListener('mousemove', function(e) {
                         var coordinates = map.unproject([e.x, e.y]);
                         popup.setLngLat(coordinates)
-                          .setText(marker.name)
+                          .setText(marker.properties.title)
                           .addTo(map); 
                     });
 
@@ -131,8 +119,22 @@
                     });
 
                     new mapboxgl.Marker(el)
-                        .setLngLat([marker.long, marker.lat])
+                        .setLngLat(marker.geometry.coordinates)
                         .addTo(map);
+
+                    var button = document.createElement('button');
+                    button.className = 'location_btn';
+                    button.value = marker.properties.location_index;
+                    button.innerHTML = "Day " + (index + 1) + " - " + marker.properties.title;
+                    $(".overlay").append(button)
+                });
+
+                $(".location_btn").click(function() {
+                    var location_index = Number($(this).val());
+                    point.features[0].geometry.coordinates = route.geometry.coordinates[location_index];
+                    map.getSource('point').setData(point);
+                    counter = location_index;
+                    animate(counter);
                 });
 
                 map.addSource('point', {
