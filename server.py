@@ -104,6 +104,9 @@ def mapbox_gl():
     route_data, waypoints = get_route_data()
 
     stop_locations = create_stop_locations_details()
+
+    # For each stop location, add the waypoint index 
+    # that we got from the route data
     for stop_location in stop_locations:
         waypoint_index = stop_location.properties["route_index"]
         waypoint = waypoints[waypoint_index]

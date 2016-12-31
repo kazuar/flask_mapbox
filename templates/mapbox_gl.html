@@ -122,6 +122,7 @@
                         .setLngLat(marker.geometry.coordinates)
                         .addTo(map);
 
+                    // Create location buttons
                     var button = document.createElement('button');
                     button.className = 'location_btn';
                     button.value = marker.properties.location_index;
@@ -129,14 +130,21 @@
                     $(".overlay").append(button)
                 });
 
+                // Control the location of the car icon
                 $(".location_btn").click(function() {
+                    // Get the location index from the button value
                     var location_index = Number($(this).val());
+
+                    // Set the location of the car point on the route coordinate
                     point.features[0].geometry.coordinates = route.geometry.coordinates[location_index];
                     map.getSource('point').setData(point);
+
+                    // Start the animation from that index
                     counter = location_index;
                     animate(counter);
                 });
 
+                // Add source for the car icon layer
                 map.addSource('point', {
                     "type": "geojson",
                     "data": point
