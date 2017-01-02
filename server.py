@@ -34,12 +34,13 @@ ROUTE = [
     {"lat": 64.14586, "long": -21.93955, "name": "Reykjavik", "is_stop_location": True},
 ]
 
+# Mapbox driving direction API call
 ROUTE_URL = "https://api.mapbox.com/directions/v5/mapbox/driving/{0}.json?access_token={1}&overview=full&geometries=geojson"
 
 def create_route_url():
-    # Creat a string containing all the geo coordinates
+    # Create a string with all the geo coordinates
     lat_longs = ";".join(["{0},{1}".format(point["long"], point["lat"]) for point in ROUTE])
-    # Create the url with the geo coordinates and access token
+    # Create a url with the geo coordinates and access token
     url = ROUTE_URL.format(lat_longs, MAPBOX_ACCESS_KEY)
     return url
 
